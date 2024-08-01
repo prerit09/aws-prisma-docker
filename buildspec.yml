@@ -36,7 +36,9 @@ phases:
   post_build:
     commands:
       - echo Build and push completed on `date`
+      - echo Creating imagedefinitions.json file...
+      - printf '[{"name":"%s","imageUri":"%s"}]' $IMAGE_REPO_NAME $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:latest > imagedefinitions.json
 
 artifacts:
   files:
-    - '**/*'
+    - imagedefinitions.json
