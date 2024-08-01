@@ -2,35 +2,38 @@ version: 0.2
 
 env:
   variables:
-    AWS_ACCOUNT_ID: "011528271808"
-    AWS_DEFAULT_REGION: "eu-central-1"
-    IMAGE_REPO_NAME: "aws-prisma-docker-repo"
+    AWS_ACCOUNT_ID: "011528271808"  # Replace with your AWS account ID
+    AWS_DEFAULT_REGION: "us-west-2"  # Replace with your AWS region
+    IMAGE_REPO_NAME: "aws-prisma-docker-repo"  # Replace with your ECR repository name
 
 phases:
-  # install:
-  #   runtime-versions:
-  #     python: 3.x # Using a runtime that is supported
-  #   commands:
-      # - echo Installing Docker...
-      # - apt-get update
-      # - apt-get install -y docker.io
-      # - service docker start
- 
+  install:
+    runtime-versions:
+      docker: 20
+    commands:
+      - echo Starting the install phase...
+
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
+      - aws --version
+      - docker --version
+      - echo $AWS_DEFAULT_REGION
+      - echo $AWS_ACCOUNT_ID
+      - echo $IMAGE_REPO_NAME
+      - echo "Retrieving ECR login password..."
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - echo Build started on `date`
-      - echo Building the Docker image...
-      - docker build -t $IMAGE_REPO_NAME .
-
+      
   build:
     commands:
+      - echo Building the Docker image...
+      - docker build -t $IMAGE_REPO_NAME .
       - echo Tagging the Docker image...
       - docker tag $IMAGE_REPO_NAME:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:latest
       - echo Pushing the Docker image to ECR...
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:latest
-
+      
   post_build:
     commands:
       - echo Build and push completed on `date`
