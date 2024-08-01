@@ -1,0 +1,36 @@
+version: 0.2
+
+env:
+  variables:
+    AWS_ACCOUNT_ID: "011528271808"
+    AWS_DEFAULT_REGION: "eu-central-1"
+    IMAGE_REPO_NAME: "aws-prisma-docker-repo"
+
+phases:
+  install:
+    runtime-versions:
+      docker: 19
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+
+  pre_build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t $IMAGE_REPO_NAME .
+
+  build:
+    commands:
+      - echo Tagging the Docker image...
+      - docker tag $IMAGE_REPO_NAME:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:latest
+      - echo Pushing the Docker image to ECR...
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:latest
+
+  post_build:
+    commands:
+      - echo Build and push completed on `date`
+
+artifacts:
+  files:
+    - '**/*'
