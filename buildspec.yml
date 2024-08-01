@@ -3,7 +3,7 @@ version: 0.2
 env:
   variables:
     AWS_ACCOUNT_ID: "011528271808"  # Replace with your AWS account ID
-    AWS_DEFAULT_REGION: "us-west-2"  # Replace with your AWS region
+    AWS_DEFAULT_REGION: "eu-central-1"  # Replace with your AWS region
     IMAGE_REPO_NAME: "aws-prisma-docker-repo"  # Replace with your ECR repository name
 
 phases:
