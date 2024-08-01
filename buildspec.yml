@@ -21,7 +21,8 @@ phases:
       - echo $AWS_ACCOUNT_ID
       - echo $IMAGE_REPO_NAME
       - echo "Retrieving ECR login password..."
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 011528271808.dkr.ecr.eu-central-1.amazonaws.com
+      # - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - echo Build started on `date`
       
   build:
