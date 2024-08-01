@@ -5,6 +5,7 @@ env:
     AWS_ACCOUNT_ID: "011528271808"  # Replace with your AWS account ID
     AWS_DEFAULT_REGION: "eu-central-1"  # Replace with your AWS region
     IMAGE_REPO_NAME: "aws-prisma-docker-repo"  # Replace with your ECR repository name
+    CONTAINER_NAME: "prisma-dev"  # Replace with your ECR repository name
 
 phases:
   install:
@@ -37,7 +38,7 @@ phases:
     commands:
       - echo Build and push completed on `date`
       - echo Creating imagedefinitions.json file...
-      - printf '[{"name":"%s","imageUri":"%s"}]' $IMAGE_REPO_NAME $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:latest > imagedefinitions.json
+      - printf '[{"name":"%s","imageUri":"%s"}]' $CONTAINER_NAME $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:latest > imagedefinitions.json
 
 artifacts:
   files:
