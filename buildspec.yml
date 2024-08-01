@@ -8,16 +8,15 @@ env:
 
 phases:
   install:
-    runtime-versions:
-      docker: 20
     commands:
       - echo Starting the install phase...
+      - echo Checking AWS CLI and Docker versions...
+      - aws --version
+      - docker --version
 
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - aws --version
-      - docker --version
       - echo $AWS_DEFAULT_REGION
       - echo $AWS_ACCOUNT_ID
       - echo $IMAGE_REPO_NAME
