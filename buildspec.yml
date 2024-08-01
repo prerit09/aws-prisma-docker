@@ -1,6 +1,5 @@
 version: 0.2
 
-
 env:
   variables:
     AWS_ACCOUNT_ID: "011528271808"  # Replace with your AWS account ID
