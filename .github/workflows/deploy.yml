@@ -25,7 +25,6 @@ jobs:
 
     - name: Archive the repository
         run: |
-          # Create a tar archive of the repository excluding certain files
           tar --exclude='.git' --exclude='node_modules' --exclude='*.log' -czf app.tar.gz .
 
     - name: Copy files to EC2
