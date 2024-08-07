@@ -3,7 +3,39 @@ import Head from "../components/head";
 import Nav from "../components/nav";
 import Breaches from "../components/breaches";
 
-const Home = () => (
+import { isValidToken } from '../lib/auth';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
+
+
+export async function getServerSideProps(context) {
+  const token = context.query.token; 
+
+  if (!token || !isValidToken(token)) {
+    return {
+      redirect: {
+        destination: '/error', 
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: { token },
+  };
+}
+
+const Home = ({ token }) => {
+  const router = useRouter();
+  useEffect(() => {
+    // Remove the token from the URL
+    const cleanUrl = window.location.pathname;
+    window.history.replaceState(null, '', cleanUrl);
+  }, []);
+
+  return (
+
   <div>
     <Head title="Home" />
     <Nav />
@@ -68,6 +100,6 @@ const Home = () => (
       }
     `}</style>
   </div>
-);
-
+  );
+};
 export default Home;
