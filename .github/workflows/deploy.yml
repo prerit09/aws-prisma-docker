@@ -27,6 +27,6 @@ jobs:
       run: |
         docker build -t ${{ env.DOCKER_IMAGE_NAME }} .
 
-    - name: Push Docker image to EC2
+    - name: Run Docker image on EC2
       run: |
         ssh -o StrictHostKeyChecking=no -i /home/runner/.ssh/id_rsa ${{ env.EC2_USER }}@${{ env.EC2_HOST }} "docker run -d -p 80:3000 ${{ env.DOCKER_IMAGE_NAME }}"
