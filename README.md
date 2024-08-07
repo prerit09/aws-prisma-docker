@@ -19,5 +19,3 @@ Deploy the site using at least 2 technology stacks. Make sure that both types of
 ## Task 4 
 
 What issues can you identify in the given site? What types of improvements would you suggest?
-
-# Test Auto Deploy
