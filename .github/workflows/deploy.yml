@@ -23,10 +23,18 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: Build Docker image
-      run: |
-        docker build -t ${{ env.DOCKER_IMAGE_NAME }} .
+    - name: Archive the repository
+      run: tar -czf app.tar.gz .
 
-    - name: Run Docker image on EC2
+    - name: Copy files to EC2
+      run: scp -o StrictHostKeyChecking=no -i /home/runner/.ssh/id_rsa app.tar.gz ${{ env.EC2_USER }}@${{ env.EC2_HOST }}:/home/${{ env.EC2_USER }}/app.tar.gz
+
+    - name: Deploy on EC2
       run: |
-        ssh -o StrictHostKeyChecking=no -i /home/runner/.ssh/id_rsa ${{ env.EC2_USER }}@${{ env.EC2_HOST }} "docker run -d -p 80:3000 ${{ env.DOCKER_IMAGE_NAME }}"
+        ssh -o StrictHostKeyChecking=no -i /home/runner/.ssh/id_rsa ${{ env.EC2_USER }}@${{ env.EC2_HOST }} << 'EOF'
+          mkdir -p /home/${{ env.EC2_USER }}/app
+          tar -xzf /home/${{ env.EC2_USER }}/app.tar.gz -C /home/${{ env.EC2_USER }}/app
+          cd /home/${{ env.EC2_USER }}/app
+          docker build -t ${{ env.DOCKER_IMAGE_NAME }} .
+          docker run -d -p 80:3000 ${{ env.DOCKER_IMAGE_NAME }}
+        EOF
