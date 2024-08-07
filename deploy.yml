@@ -1,0 +1,33 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      EC2_USER: ec2-user
+      EC2_HOST: 18.159.112.89
+      DOCKER_IMAGE_NAME: prisma:prod
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Build Docker image
+      run: |
+        docker build -t ${{ env.DOCKER_IMAGE_NAME }} .
+
+    - name: Push Docker image to EC2
+      run: |
+        scp -o StrictHostKeyChecking=no -i /home/runner/.ssh/id_rsa Dockerfile ${{ env.EC2_USER }}@${{ env.EC2_HOST }}:/home/${{ env.EC2_USER }}/
+        ssh -o StrictHostKeyChecking=no -i /home/runner/.ssh/id_rsa ${{ env.EC2_USER }}@${{ env.EC2_HOST }} "docker build -t ${{ env.DOCKER_IMAGE_NAME }} /home/${{ env.EC2_USER }}/ && docker run -d -p 80:3000 ${{ env.DOCKER_IMAGE_NAME }}"
